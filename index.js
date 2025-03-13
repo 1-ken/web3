@@ -1,17 +1,24 @@
 const {Web3} = require('web3');
-{
-    //importing in a frontend application
-//import Web3  from 'web3';
-}
-const customProvider = {
-    sendAsync: (payload,cb)=>{
-        console.log("you called");
-        console.log(payload);
-        cb(undefined,100);
+const MyContract = require('./build/contracts/MyContract.json')
 
-    }
+const init = async () => {
+
+const web3 = new Web3('http://localhost:8545')
+//checking if the connection was a success
+
+
+const id = await web3.eth.net.getId();
+const deployedNetwork = MyContract.networks[id];
+
+web3.eth.getBlockNumber().then((latestBlock) => {
+    console.log(`✅ Connected to Blockchain. Latest Block: ${latestBlock}`);
+});
+const contract = new web3.eth.Contract(MyContract.abi, deployedNetwork.address);
+
+
+web3.eth.getAccounts().then(accounts =>{
+    console.log(`✅ Available Accounts:`, accounts)
+})
+
 }
-//const provider = new web3.providers.httpProvider('http://localhost:8545');
-const web3 = new Web3(customProvider);
-//connected to the blockchain;
-web3.eth.getBlockNumber().then(()=>console.log('done'));
+init();
